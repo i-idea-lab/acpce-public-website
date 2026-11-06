@@ -11,14 +11,14 @@ interface SearchModalProps {
 
 export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
-  const [allPages, setAllPages] = useState<Record<string, any>>({});
+  const [allPages, setAllPages] = useState<Array<any>>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      fetch('/data/pages.json')
+      fetch('/api/search')
         .then((res) => res.json())
-        .then((data) => setAllPages(data))
+        .then((data) => setAllPages(Array.isArray(data) ? data : Object.values(data)))
         .catch((err) => console.error('Failed to load search data:', err));
 
       setTimeout(() => inputRef.current?.focus(), 50);
@@ -36,10 +36,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
       title: string;
       excerpt: string;
       url: string;
-      pdfCount: number;
+      pdfCount?: number;
     }> = [];
 
-    const pageEntries = Object.values(allPages);
+    const pageEntries = Array.isArray(allPages) ? allPages : Object.values(allPages);
 
     for (const page of pageEntries) {
       const titleMatch = (page.title || '').toLowerCase().includes(q);
@@ -126,7 +126,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                     <FileText className="w-4 h-4 mr-2 text-amber-500" />
                     {res.title}
                   </h4>
-                  {res.pdfCount > 0 && (
+                  {res.pdfCount != null && res.pdfCount > 0 && (
                     <span className="text-[10px] bg-red-100 text-red-700 font-semibold px-2 py-0.5 rounded-full">
                       {res.pdfCount} PDF{res.pdfCount > 1 ? 's' : ''}
                     </span>
