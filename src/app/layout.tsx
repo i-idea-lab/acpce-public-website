@@ -6,7 +6,15 @@ export const metadata: Metadata = {
   title: 'A. C. Patil College of Engineering | Navi Mumbai',
   description: 'A. C. Patil College of Engineering (ACPCE), Navi Mumbai. Approved by AICTE, Affiliated to University of Mumbai, NAAC Accredited. DTE Code: 3146.',
   icons: {
-    icon: 'https://acpce.ac.in/wp-content/uploads/2025/06/New-Logo-300x151-1.webp'
+    icon: [
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: 'https://acpce.ac.in/wp-content/uploads/2025/06/New-Logo-300x151-1.webp', sizes: '192x192' }
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }
+    ],
+    shortcut: '/favicon.ico'
   }
 };
 
