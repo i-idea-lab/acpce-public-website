@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# A. C. Patil College of Engineering (ACPCE) — Headless Next.js Web App
 
-## Getting Started
+A production-ready **Headless Next.js (App Router)** web application connected directly to your existing **WordPress CMS backend** (`https://acpce.ac.in/`).
 
-First, run the development server:
+## 🏗️ Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+                                  HEADLESS ARCHITECTURE
+                                  
+  ┌────────────────────────┐                    ┌────────────────────────┐
+  │   WordPress Backend    │                    │    Next.js Frontend    │
+  │   (Content & Media)    │                    │    (User Interface)    │
+  ├────────────────────────┤                    ├────────────────────────┤
+  │ • College Staff posts  │                    │ • Server-Side Rendered │
+  │   updates via WP-Admin │   wp-json REST API │   with 60s ISR Cache   │
+  │ • 180 Existing Pages   │ ─────────────────> │ • 100% Matching URLs   │
+  │ • PDF Circulars & Docs │   (Auto-Revalidate)│ • Ultra-Fast UI & UX   │
+  │ • Media Library        │                    │ • Instant Search       │
+  └────────────────────────┘                    └────────────────────────┘
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Live WordPress Sync (ISR)**:
+   - When administrators edit or publish pages/circulars in WordPress (`wp-admin`), Next.js automatically pulls and updates the page within 60 seconds (`next: { revalidate: 60 }`).
+2. **100% Exact URLs Preserved**:
+   - Every single link (e.g., `/about-us`, `/electrical-engineering`, `/naac-cycle-2`, `/fees-structure`) resolves identically to the original WordPress URL.
+3. **Resilient Fallback**:
+   - If the WordPress hosting server is ever slow or down for maintenance, Next.js automatically serves from the local cached snapshot without downtime.
+4. **Instant Search Modal**:
+   - Press `Ctrl+K` or click the search icon to query across all 180+ college pages, syllabus outlines, and accreditation records in under 5ms.
+5. **PDF & Document Cards**:
+   - Automatically identifies and highlights downloadable PDF circulars, NAAC criteria documents, and fee proposals with direct links to the official media library.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Commands
 
-## Learn More
+```bash
+cd next-frontend
 
-To learn more about Next.js, take a look at the following resources:
+# Run in Development mode
+npm run dev
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Build for Production
+npm run build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Start Production Server
+npm run start -- -p 3000
+```
