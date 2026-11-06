@@ -4,10 +4,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import {
   Download,
-  ExternalLink,
-  ChevronRight,
-  BookOpen,
-  ArrowLeft
+  ChevronRight
 } from 'lucide-react';
 import { getWordPressPage } from '../../lib/wordpress';
 import localPages from '../../data/pages.json';
@@ -58,47 +55,17 @@ export default async function SlugPage({ params }: PageProps) {
             Home
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-          <span className="text-gray-400">Pages</span>
-          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-[#0f2b48] font-semibold truncate max-w-xs sm:max-w-md">
             {pageData.title}
           </span>
         </nav>
 
-        {/* Page Header Banner */}
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 md:p-8 mb-8 relative overflow-hidden">
-          <div className="absolute -right-8 -top-8 w-40 h-40 bg-blue-50/60 rounded-full blur-2xl pointer-events-none" />
-          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <span className="inline-block text-[11px] font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mb-2">
-                A. C. Patil College of Engineering
-              </span>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-[#0f2b48] tracking-tight">
-                {pageData.title}
-              </h1>
-              <p className="text-xs text-gray-400 mt-2 flex items-center gap-3">
-                <span>URL: <code className="text-gray-600 font-mono">https://acpce.ac.in/{pageData.slug}/</code></span>
-                {pageData.pdfCount > 0 && (
-                  <span className="bg-red-50 text-red-600 px-2 py-0.5 rounded font-medium">
-                    {pageData.pdfCount} Official Document{pageData.pdfCount > 1 ? 's' : ''} attached
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="flex items-center space-x-2">
-              <a
-                href={`https://acpce.ac.in/${pageData.slug}/`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-xs font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-lg transition"
-                title="View original on live WordPress site"
-              >
-                Original Live Page <ExternalLink className="w-3.5 h-3.5 ml-1.5" />
-              </a>
-            </div>
-          </div>
+        {/* Clean Page Title */}
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0f2b48] tracking-tight">
+            {pageData.title}
+          </h1>
+          <div className="w-16 h-1 bg-amber-500 rounded-full mt-3" />
         </div>
 
         {/* Content Layout Grid */}
