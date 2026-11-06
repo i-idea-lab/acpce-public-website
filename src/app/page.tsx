@@ -91,7 +91,7 @@ export default async function HomePage() {
                   <div className="flex items-center justify-between pb-4 border-b border-white/10">
                     <div>
                       <span className="text-xs text-amber-400 font-bold uppercase tracking-wider block">
-                        Jawahar Education Society's
+                        Jawahar Education Society&apos;s
                       </span>
                       <h3 className="text-xl font-bold text-white">A. C. Patil College of Engg.</h3>
                     </div>

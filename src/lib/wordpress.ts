@@ -48,30 +48,74 @@ export interface HomePageContent {
   }>;
 }
 
-const WP_API_BASE = 'https://acpce.ac.in/wp-json/wp/v2';
+interface WpRawItem {
+  id: number;
+  slug: string;
+  date?: string;
+  link?: string;
+  title?: {
+    rendered?: string;
+  };
+  content?: {
+    rendered?: string;
+  };
+  excerpt?: {
+    rendered?: string;
+  };
+}
 
-function parseWpPost(item: any): PageData {
+const WP_API_BASE = process.env.WP_API_BASE_URL || 'https://acpce.ac.in/wp-json/wp/v2';
+
+/**
+ * Sanitize WordPress HTML to prevent Stored XSS while preserving legitimate
+ * Elementor/WordPress markup, tables, classes, images, and PDF links.
+ */
+export function sanitizeWpHtml(html: string): string {
+  return html
+    // Strip executable tags and their contents
+    .replace(/<(script|object|embed|applet|base)[^>]*>[\s\S]*?<\/\1>/gi, '')
+    // Strip self-closing or unclosed executable tags
+    .replace(/<(script|object|embed|applet|base)[^>]*\/?>/gi, '')
+    // Strip inline DOM event handlers (e.g. onload=, onerror=, onclick=)
+    .replace(/\s+on[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    // Neutralize javascript: and data:text/html URIs in href/src
+    .replace(/(href|src)\s*=\s*(["'])\s*(?:javascript:|data:text\/html)[^"']*\2/gi, '$1=$2#$2');
+}
+
+function isSafeAssetUrl(url: string): boolean {
+  return /^https?:\/\/|^\//i.test(url.trim());
+}
+
+function parseWpPost(item: WpRawItem): PageData {
   const rawHtml = item.content?.rendered || '';
-  
-  // Clean legacy staging URLs and standardize protocol
-  const cleanHtml = rawHtml
-    .replace(/https?:\/\/dodgerblue-jaguar-171172\.hostingersite\.com/g, 'https://acpce.ac.in')
-    .replace(/http:\/\/acpce\.ac\.in/g, 'https://acpce.ac.in');
+
+  // Clean legacy staging URLs, standardize protocol, and sanitize against XSS
+  const cleanHtml = sanitizeWpHtml(
+    rawHtml
+      .replace(/https?:\/\/dodgerblue-jaguar-171172\.hostingersite\.com/g, 'https://acpce.ac.in')
+      .replace(/http:\/\/acpce\.ac\.in/g, 'https://acpce.ac.in')
+  );
 
   const cleanText = cleanHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
-  // Extract PDFs
+  // Extract PDFs and verify safe URL scheme
   const pdfMatches = cleanHtml.match(/href=["']([^"']+\.pdf)["']/gi) || [];
   const pdfs: string[] = Array.from(
-    new Set(pdfMatches.map((m: string) => m.replace(/href=["']/i, '').replace(/["']$/, '')))
+    new Set(
+      pdfMatches
+        .map((m: string) => m.replace(/href=["']/i, '').replace(/["']$/, ''))
+        .filter(isSafeAssetUrl)
+    )
   );
 
-  // Extract images
+  // Extract images and verify safe URL scheme
   const imgMatches = cleanHtml.match(/<img[^>]*src=["']([^"']+)["']/gi) || [];
-  const images = imgMatches.map((m: string) => {
-    const srcMatch = m.match(/src=["']([^"']+)["']/i);
-    return srcMatch ? srcMatch[1] : '';
-  }).filter(Boolean);
+  const images = imgMatches
+    .map((m: string) => {
+      const srcMatch = m.match(/src=["']([^"']+)["']/i);
+      return srcMatch ? srcMatch[1] : '';
+    })
+    .filter((url) => Boolean(url) && isSafeAssetUrl(url));
 
   let title = item.title?.rendered || '';
   title = title
@@ -103,15 +147,20 @@ function parseWpPost(item: any): PageData {
 export async function getWordPressPage(slug: string): Promise<PageData | null> {
   const normalized = slug.replace(/^\/|\/$/g, '').toLowerCase();
 
+  // Strict slug validation to prevent query manipulation or invalid characters
+  if (!normalized || !/^[a-z0-9-_~.%]+$/i.test(normalized)) {
+    return null;
+  }
+
   try {
-    const res = await fetch(`${WP_API_BASE}/pages?slug=${normalized}`, {
+    const res = await fetch(`${WP_API_BASE}/pages?slug=${encodeURIComponent(normalized)}`, {
       next: { revalidate: 60 } // Next.js ISR: checks WordPress for updates every 60s
     });
 
     if (res.ok) {
-      const items = await res.json();
+      const items: unknown = await res.json();
       if (Array.isArray(items) && items.length > 0) {
-        return parseWpPost(items[0]);
+        return parseWpPost(items[0] as WpRawItem);
       }
     }
   } catch (err) {
@@ -119,8 +168,14 @@ export async function getWordPressPage(slug: string): Promise<PageData | null> {
   }
 
   // Resilient fallback to local archive if WP is temporarily unreachable
-  const fallback = (localPages as Record<string, any>)[normalized];
-  return fallback || null;
+  const typedLocalPages = localPages as Record<string, PageData>;
+  const fallback = typedLocalPages[normalized];
+  if (!fallback) return null;
+
+  return {
+    ...fallback,
+    html: sanitizeWpHtml(fallback.html)
+  };
 }
 
 /**
@@ -239,14 +294,17 @@ export async function getParsedHomePage(): Promise<HomePageContent> {
  * Fetch latest news/circulars from WordPress
  */
 export async function getWordPressPosts(perPage: number = 6): Promise<PostData[]> {
+  const safeCount = Math.min(Math.max(1, Math.floor(perPage)), 20);
   try {
-    const res = await fetch(`${WP_API_BASE}/posts?per_page=${perPage}`, {
+    const res = await fetch(`${WP_API_BASE}/posts?per_page=${safeCount}`, {
       next: { revalidate: 60 }
     });
 
     if (res.ok) {
-      const items = await res.json();
-      return items.map((p: any) => ({
+      const items: unknown = await res.json();
+      if (!Array.isArray(items)) return [];
+
+      return (items as WpRawItem[]).map((p) => ({
         id: p.id,
         slug: p.slug,
         date: p.date?.slice(0, 10) || '',
@@ -257,7 +315,7 @@ export async function getWordPressPosts(perPage: number = 6): Promise<PostData[]
           .replace(/<[^>]+>/g, ''),
         excerpt: (p.excerpt?.rendered || '').replace(/<[^>]+>/g, '').trim(),
         link: `/post/${p.slug}`,
-        html: p.content?.rendered || ''
+        html: sanitizeWpHtml(p.content?.rendered || '')
       }));
     }
   } catch (err) {

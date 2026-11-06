@@ -95,6 +95,7 @@ export default function AdmissionEnquiryPage() {
                     <input
                       required
                       type="text"
+                      maxLength={100}
                       placeholder="e.g. Rahul Sharma"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -109,6 +110,9 @@ export default function AdmissionEnquiryPage() {
                     <input
                       required
                       type="tel"
+                      maxLength={15}
+                      pattern="^[0-9+\-\s()]{10,15}$"
+                      title="Please enter a valid 10-digit mobile number"
                       placeholder="10-digit mobile number"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -125,6 +129,7 @@ export default function AdmissionEnquiryPage() {
                     <input
                       required
                       type="email"
+                      maxLength={120}
                       placeholder="student@example.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -138,6 +143,7 @@ export default function AdmissionEnquiryPage() {
                     </label>
                     <input
                       type="text"
+                      maxLength={80}
                       placeholder="e.g. Navi Mumbai, Thane"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -191,6 +197,7 @@ export default function AdmissionEnquiryPage() {
                   </label>
                   <textarea
                     rows={3}
+                    maxLength={1000}
                     placeholder="Mention any queries regarding CET/JEE score eligibility, fees, or hostel facilities..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}

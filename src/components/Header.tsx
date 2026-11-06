@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { navigationData } from '../data/navigation';
@@ -24,11 +24,11 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
   const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
-  useEffect(() => {
+  const closeMenus = () => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
     setActiveSubDropdown(null);
-  }, [pathname]);
+  };
 
   return (
     <header className="w-full sticky top-0 z-50 bg-white shadow-md transition-all duration-200">
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xs uppercase tracking-widest font-semibold text-amber-600">
-                  Jawahar Education Society's
+                  Jawahar Education Society&apos;s
                 </span>
               </div>
               <h1 className="text-lg md:text-xl font-extrabold text-[#0f2b48] leading-tight tracking-tight">
@@ -213,6 +213,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                                 ) : (
                                   <Link
                                     href={subItem.href}
+                                    onClick={closeMenus}
                                     className={`block px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs font-medium transition ${
                                       pathname === subItem.href
                                         ? 'bg-amber-100 text-amber-900 font-bold'
@@ -248,6 +249,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                                         ) : (
                                           <Link
                                             href={nested.href || '#'}
+                                            onClick={closeMenus}
                                             className={`block px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs transition ${
                                               pathname === nested.href
                                                 ? 'bg-amber-100 text-amber-900 font-bold'

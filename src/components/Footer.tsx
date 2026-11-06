@@ -33,7 +33,7 @@ export const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Jawahar Education Society's premier engineering institute, committed to academic excellence,
+              Jawahar Education Society&apos;s premier engineering institute, committed to academic excellence,
               cutting-edge research, and industry-oriented technical education.
             </p>
             <div className="pt-2 flex flex-col space-y-1.5 text-xs text-gray-300">

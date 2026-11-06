@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { Search, X, FileText, ArrowRight } from 'lucide-react';
+import type { SearchEntry } from '../app/api/search/route';
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -11,42 +12,45 @@ interface SearchModalProps {
 
 export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => {
   const [query, setQuery] = useState('');
-  const [allPages, setAllPages] = useState<Array<any>>([]);
+  const [allPages, setAllPages] = useState<SearchEntry[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (isOpen) {
-      fetch('/api/search')
-        .then((res) => res.json())
-        .then((data) => setAllPages(Array.isArray(data) ? data : Object.values(data)))
-        .catch((err) => console.error('Failed to load search data:', err));
+  const handleClose = () => {
+    setQuery('');
+    onClose();
+  };
 
-      setTimeout(() => inputRef.current?.focus(), 50);
-    } else {
-      setQuery('');
-    }
+  useEffect(() => {
+    if (!isOpen) return;
+
+    fetch('/api/search')
+      .then((res) => res.json())
+      .then((data: unknown) => {
+        if (Array.isArray(data)) {
+          setAllPages(data as SearchEntry[]);
+        } else if (data && typeof data === 'object') {
+          setAllPages(Object.values(data) as SearchEntry[]);
+        }
+      })
+      .catch((err) => console.error('Failed to load search data:', err));
+
+    const timer = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
   }, [isOpen]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q || q.length < 2) return [];
 
-    const matches: Array<{
-      slug: string;
-      title: string;
-      excerpt: string;
-      url: string;
-      pdfCount?: number;
-    }> = [];
+    const matches: SearchEntry[] = [];
 
-    const pageEntries = Array.isArray(allPages) ? allPages : Object.values(allPages);
-
-    for (const page of pageEntries) {
+    for (const page of allPages) {
       const titleMatch = (page.title || '').toLowerCase().includes(q);
       const contentMatch = (page.excerpt || '').toLowerCase().includes(q);
 
       if (titleMatch || contentMatch) {
         matches.push({
+          id: page.id,
           slug: page.slug,
           title: page.title,
           excerpt: page.excerpt,
@@ -85,7 +89,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             </button>
           )}
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-2.5 py-1 text-xs font-semibold text-gray-500 hover:text-gray-800 bg-gray-200 hover:bg-gray-300 rounded-md transition cursor-pointer"
           >
             ESC
@@ -111,14 +115,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             </div>
           ) : results.length === 0 ? (
             <div className="py-8 text-center text-gray-500 text-sm">
-              No matching pages found for "{query}".
+              No matching pages found for &ldquo;{query}&rdquo;.
             </div>
           ) : (
             results.map((res) => (
               <Link
                 key={res.slug}
                 href={res.url}
-                onClick={onClose}
+                onClick={handleClose}
                 className="block p-3 rounded-xl hover:bg-blue-50/60 border border-transparent hover:border-blue-100 transition group"
               >
                 <div className="flex items-center justify-between">
