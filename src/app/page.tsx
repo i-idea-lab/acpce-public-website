@@ -2,103 +2,24 @@ import React from 'react';
 import Link from 'next/link';
 import {
   GraduationCap,
-  Building,
   ArrowRight,
-  Compass,
-  Briefcase,
   CheckCircle2,
-  Sparkles,
+  Calendar,
+  FileCheck,
   ChevronRight,
-  Laptop,
-  Cpu,
-  BrainCircuit,
-  Plane,
-  Layers,
-  FileCheck
+  Sparkles,
+  BookOpen,
+  Award
 } from 'lucide-react';
-import { getWordPressPosts } from '../lib/wordpress';
+import { getParsedHomePage, getWordPressPosts } from '../lib/wordpress';
 
 export default async function HomePage() {
+  const home = await getParsedHomePage();
   const latestPosts = await getWordPressPosts(4);
-
-  const courses = [
-    {
-      title: "Computer Engineering",
-      slug: "computer-engineering",
-      type: "ug",
-      icon: Laptop,
-      desc: "Software development, algorithms, cloud computing, cybersecurity and distributed architectures.",
-      intake: "120 Seats"
-    },
-    {
-      title: "Artificial Intelligence & Data Science",
-      slug: "artificial-intelligence-data-science",
-      type: "ug",
-      icon: BrainCircuit,
-      desc: "Machine learning, neural networks, computer vision, big data analytics, and modern AI systems.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Information Technology",
-      slug: "information-technology",
-      type: "ug",
-      icon: Cpu,
-      desc: "Enterprise networking, web engineering, database administration, and software system design.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Computer Science & Engineering (IoT)",
-      slug: "computer-science-and-engineering",
-      type: "ug",
-      icon: Layers,
-      desc: "Internet of Things, embedded systems, connected sensors, and edge computing architectures.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Electrical Engineering",
-      slug: "electrical-engineering",
-      type: "ug",
-      icon: Sparkles,
-      desc: "Power electronics, smart grid engineering, renewable energy, and industrial control systems.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Electronics & Telecommunication",
-      slug: "electronics-telecommunication",
-      type: "ug",
-      icon: Compass,
-      desc: "Wireless communications, 5G signals, embedded VLSI, and digital signal processing.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Mechanical Engineering",
-      slug: "mechanical-engineering",
-      type: "ug",
-      icon: Building,
-      desc: "Thermodynamics, CAD/CAM automation, robotics, materials science, and automotive systems.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Aeronautical Engineering",
-      slug: "aeronautical-engineering",
-      type: "ug",
-      icon: Plane,
-      desc: "Aerodynamics, flight mechanics, avionics, propulsion, and aerospace vehicle structures.",
-      intake: "60 Seats"
-    },
-    {
-      title: "Master of Management Studies (MMS)",
-      slug: "master-of-management-studies",
-      type: "pg",
-      icon: Briefcase,
-      desc: "Comprehensive MBA-equivalent program in Finance, Marketing, HR, and Operations Management.",
-      intake: "60 Seats"
-    }
-  ];
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      {/* 1. Hero Section */}
+      {/* 1. Hero Section - Exact WordPress copy: Everything plus imagination */}
       <section className="relative bg-gradient-to-br from-[#07192b] via-[#0f2b48] to-[#1b3a5b] text-white py-20 lg:py-28 overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -112,13 +33,14 @@ export default async function HomePage() {
                 <span>Admissions Open for AY 2026-27 | DTE Code: 3146</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-                Empowering Tomorrow’s Innovators with <span className="text-amber-400">Engineering Excellence</span>
+              {/* Exact WordPress Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                Everything <span className="text-amber-400 italic">plus</span> imagination
               </h1>
 
+              {/* Exact WordPress Subheading */}
               <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-2xl">
-                A. C. Patil College of Engineering (ACPCE), Navi Mumbai, provides state-of-the-art technical education,
-                industry-backed curriculum, research incubation, and holistic student development affiliated to University of Mumbai.
+                {home.heroSub}
               </p>
 
               {/* Action Buttons */}
@@ -133,7 +55,7 @@ export default async function HomePage() {
                   href="/ug-pg-courses"
                   className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl text-sm transition border border-white/20 flex items-center"
                 >
-                  Explore All Programs
+                  Discover Courses
                 </Link>
                 <a
                   href="https://acpce.ac.in/wp-content/uploads/2026/04/ACPCE-Broucher.pdf"
@@ -145,7 +67,7 @@ export default async function HomePage() {
                 </a>
               </div>
 
-              {/* Quick Key Badges */}
+              {/* Badges */}
               <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 text-xs text-gray-300">
                 <div>
                   <div className="font-bold text-white text-sm">NAAC Accredited</div>
@@ -162,26 +84,26 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Right Column */}
+            {/* Right Column: Key Stats Card from WordPress */}
             <div className="lg:col-span-5">
               <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
                 <div className="space-y-6">
                   <div className="flex items-center justify-between pb-4 border-b border-white/10">
                     <div>
                       <span className="text-xs text-amber-400 font-bold uppercase tracking-wider block">
-                        Campus at a Glance
+                        Jawahar Education Society's
                       </span>
-                      <h3 className="text-xl font-bold text-white">Kharghar, Navi Mumbai</h3>
+                      <h3 className="text-xl font-bold text-white">A. C. Patil College of Engg.</h3>
                     </div>
                     <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-300">
                       <GraduationCap className="w-6 h-6" />
                     </div>
                   </div>
 
-                  {/* Highlights Grid */}
+                  {/* Highlights Grid matching WordPress home counters */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <div className="text-2xl font-extrabold text-amber-400">01 : 15</div>
+                      <div className="text-2xl font-extrabold text-amber-400">{home.ratio}</div>
                       <div className="text-xs text-gray-300 font-medium mt-1">Student-Faculty Ratio</div>
                     </div>
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
@@ -189,20 +111,19 @@ export default async function HomePage() {
                       <div className="text-xs text-gray-300 font-medium mt-1">Academic Legacy</div>
                     </div>
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <div className="text-2xl font-extrabold text-amber-400">100+</div>
-                      <div className="text-xs text-gray-300 font-medium mt-1">Corporate Recruiters</div>
+                      <div className="text-2xl font-extrabold text-amber-400">Strong</div>
+                      <div className="text-xs text-gray-300 font-medium mt-1">Alumni Network</div>
                     </div>
                     <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                      <div className="text-2xl font-extrabold text-amber-400">9 Degree</div>
-                      <div className="text-xs text-gray-300 font-medium mt-1">UG & PG Programs</div>
+                      <div className="text-2xl font-extrabold text-amber-400">Active</div>
+                      <div className="text-xs text-gray-300 font-medium mt-1">Placement Partners</div>
                     </div>
                   </div>
 
-                  {/* Notification Bar */}
                   <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center space-x-3 text-xs text-amber-200">
                     <Sparkles className="w-5 h-5 flex-shrink-0 text-amber-400" />
                     <span>
-                      Online Fee Approval Proposals for Academic Year 2026-27 are published under FRA section.
+                      DTE Code 3146 | NAAC Cycle 2 Accredited Institution
                     </span>
                   </div>
                 </div>
@@ -212,104 +133,259 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 2. Urgent Notices & Circulars Marquee */}
-      <section className="bg-amber-500 text-gray-950 py-3 font-medium text-xs sm:text-sm shadow-sm border-y border-amber-600">
-        <div className="max-w-7xl mx-auto px-4 flex items-center space-x-4">
-          <span className="font-extrabold uppercase bg-gray-950 text-white px-2.5 py-1 rounded text-xs flex-shrink-0">
-            Latest News
-          </span>
-          <div className="overflow-hidden whitespace-nowrap w-full">
-            <span className="inline-block animate-marquee">
-              🔔 Direct Second Year & First Year Admissions 2026-27 verification underway &nbsp; | &nbsp;
-              🏆 NAAC Cycle 2 Self-Study Report (SSR) & AQAR published online &nbsp; | &nbsp;
-              🎓 Campus Placement drives active for 2026 batch: TCS, Infosys, Capgemini & Tech Mahindra.
-            </span>
+      {/* 2. About ACPCE Section (Direct from WordPress) */}
+      <section className="bg-white py-20 border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <span className="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                Institutional Overview
+              </span>
+              <h2 className="text-3xl font-extrabold text-[#0f2b48]">
+                About ACPCE
+              </h2>
+              {/* Exact paragraph from WordPress */}
+              <p className="text-base text-gray-700 leading-relaxed font-normal">
+                {home.aboutText}
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  href="/about-us"
+                  className="inline-flex items-center text-xs font-bold text-white bg-[#0f2b48] hover:bg-blue-900 px-5 py-3 rounded-xl transition shadow"
+                >
+                  Read More About Us <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="relative">
+                <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-slate-100 aspect-video flex items-center justify-center relative">
+                  <img
+                    src="https://acpce.ac.in/wp-content/uploads/2025/09/Home-page-About-ACPCE.png"
+                    alt="About ACPCE"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Discover Academic Programs */}
+      {/* 3. Discover the Range of Courses we offer (With images from WordPress) */}
       <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-14">
           <span className="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-            Academic Offerings
+            Degree Programs
           </span>
-          <h2 className="text-3xl font-extrabold text-[#0f2b48] mt-3">
-            Discover Our Comprehensive Degree Programs
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0f2b48] mt-3">
+            Discover the Range of Courses we offer
           </h2>
-          <p className="text-gray-600 text-sm mt-2">
-            Curated programs aligned with NEP 2020 and University of Mumbai standards, combining technical theory with rigorous laboratory practice.
+          <p className="text-gray-500 text-sm mt-2">
+            Approved by AICTE and Affiliated to the University of Mumbai
           </p>
         </div>
 
-        {/* Courses Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {courses.map((c, idx) => {
-            const Icon = c.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col justify-between group hover:-translate-y-1"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-900 group-hover:bg-amber-500 group-hover:text-gray-950 flex items-center justify-center transition-colors">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <span className="text-[11px] font-semibold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">
-                      {c.intake}
-                    </span>
+        {/* 9 Courses Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {home.courses.map((course, idx) => (
+            <Link
+              key={idx}
+              href={`/${course.slug}`}
+              className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group hover:-translate-y-1 flex flex-col justify-between"
+            >
+              <div>
+                <div className="aspect-[16/10] bg-slate-100 overflow-hidden relative">
+                  <img
+                    src={course.image}
+                    alt={course.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3 bg-[#0f2b48]/90 backdrop-blur-md text-amber-400 text-[11px] font-bold px-3 py-1 rounded-full">
+                    {course.level}
                   </div>
-
-                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#0f2b48] transition">
-                    {c.title}
-                  </h3>
-                  <p className="text-xs text-gray-600 mt-2 leading-relaxed">
-                    {c.desc}
-                  </p>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-                  <Link
-                    href={`/${c.slug}`}
-                    className="text-xs font-bold text-blue-700 group-hover:text-amber-600 flex items-center transition"
-                  >
-                    View Curriculum & Labs <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <span className="text-[10px] uppercase font-bold text-gray-400">
-                    {c.type.toUpperCase()}
-                  </span>
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#0f2b48] transition">
+                    {course.title}
+                  </h3>
                 </div>
               </div>
-            );
-          })}
+
+              <div className="px-6 pb-6 pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-blue-700 group-hover:text-amber-600">
+                <span>View Syllabus & Labs</span>
+                <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* 4. Live WordPress Updates if present */}
-      {latestPosts && latestPosts.length > 0 && (
-        <section className="py-12 bg-white border-y border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center mb-6">
+      {/* 4. Our Vision & Mission (Exact copy from WordPress) */}
+      <section className="bg-gradient-to-br from-[#0f2b48] to-[#153e68] text-white py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-400">
+              Institutional Foundation
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2">
+              Our Vision &amp; Mission
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            {/* Vision Card */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 flex flex-col justify-between">
               <div>
-                <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">
-                  Live WordPress Feed
-                </span>
-                <h3 className="text-xl font-bold text-[#0f2b48]">Recent Announcements from WP-Admin</h3>
+                <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold mb-6">
+                  <Award className="w-6 h-6" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
+                <p className="text-base text-gray-200 leading-relaxed">
+                  {home.vision}
+                </p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {latestPosts.map((p) => (
-                <div key={p.id} className="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-col justify-between">
+
+            {/* Mission Card */}
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold mb-6">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
+                <ul className="space-y-4 text-sm text-gray-200">
+                  {home.missions.map((mission, mIdx) => (
+                    <li key={mIdx} className="flex items-start space-x-3">
+                      <CheckCircle2 className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                      <span className="leading-relaxed">{mission}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Key Institutional Pillars from WordPress Homepage */}
+      <section className="py-20 bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+          {/* Pillar 1: Innovation Cell */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                Practical Innovation
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f2b48]">
+                {home.innovTitle}
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {home.innovText}
+              </p>
+            </div>
+            <div className="lg:col-span-6">
+              <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-100 aspect-video">
+                <img
+                  src={home.innovImage}
+                  alt={home.innovTitle}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Pillar 2: Faculty Community */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 order-2 lg:order-1">
+              <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-100 aspect-video">
+                <img
+                  src={home.facultyImage}
+                  alt={home.facultyTitle}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            <div className="lg:col-span-6 space-y-4 order-1 lg:order-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                Academic Excellence
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f2b48]">
+                {home.facultyTitle}
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {home.facultyText}
+              </p>
+            </div>
+          </div>
+
+          {/* Pillar 3: Celebration & Campus Life */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-4">
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                Vibrant Culture
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0f2b48]">
+                {home.hubTitle}
+              </h2>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {home.hubText}
+              </p>
+            </div>
+            <div className="lg:col-span-6">
+              <div className="rounded-2xl overflow-hidden shadow-lg border-2 border-gray-100 aspect-video">
+                <img
+                  src={home.hubImage}
+                  alt={home.hubTitle}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Latest News (Live from WordPress Posts) */}
+      {latestPosts && latestPosts.length > 0 && (
+        <section className="py-20 bg-slate-50 border-t border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4">
+              <div>
+                <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">
+                  Circulars &amp; Updates
+                </span>
+                <h2 className="text-3xl font-extrabold text-[#0f2b48] mt-1">Latest News</h2>
+                <p className="text-gray-500 text-xs mt-1">
+                  Live announcements published directly via WordPress
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {latestPosts.map((post) => (
+                <div
+                  key={post.id}
+                  className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                >
                   <div>
-                    <span className="text-[11px] text-gray-400 font-semibold">{p.date}</span>
-                    <h4 className="font-bold text-xs text-gray-900 mt-1 line-clamp-2">{p.title}</h4>
-                    <p className="text-[11px] text-gray-500 mt-1 line-clamp-2">{p.excerpt}</p>
+                    <div className="flex items-center text-[11px] text-gray-400 font-semibold mb-2">
+                      <Calendar className="w-3.5 h-3.5 mr-1 text-amber-500" />
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="font-bold text-sm text-gray-900 line-clamp-2 mb-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 line-clamp-3 leading-relaxed">
+                      {post.excerpt}
+                    </p>
                   </div>
-                  <div className="mt-3 pt-2 border-t border-gray-200">
-                    <span className="text-[11px] text-blue-600 font-semibold flex items-center">
-                      Published via WP-Admin <CheckCircle2 className="w-3 h-3 ml-1 text-emerald-600" />
-                    </span>
+
+                  <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-blue-700">
+                    <span>Read Notice</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
               ))}
@@ -317,143 +393,6 @@ export default async function HomePage() {
           </div>
         </section>
       )}
-
-      {/* 5. About Jawahar Education Society & ACPCE */}
-      <section className="bg-slate-50 py-20 border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-                About Our Institution
-              </span>
-              <h2 className="text-3xl font-extrabold text-[#0f2b48]">
-                A Comprehensive Approach to Technical Education
-              </h2>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                Founded under the visionary leadership of Late Shri A. C. Patil and managed by Jawahar Education Society,
-                ACPCE is located right on the Sion-Panvel Expressway in Kharghar, Navi Mumbai. The college provides
-                convenient access to suburban Mumbai and the industrial corridor of Navi Mumbai and Thane-Belapur.
-              </p>
-              <p className="text-sm text-gray-600 leading-relaxed">
-                With accredited degree programs, world-class computer centers, specialized robotics & IoT facilities,
-                a rich central library, and distinguished faculty members, ACPCE fosters an environment where innovation meets practical engineering.
-              </p>
-
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-900">Industry Collaborations</h4>
-                    <p className="text-[11px] text-gray-500">MoUs with leading IT & Core industrial partners</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-900">Research & Incubation</h4>
-                    <p className="text-[11px] text-gray-500">Avishkar, e-Yantra robotics lab & hackathon culture</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-900">Student Mentorship</h4>
-                    <p className="text-[11px] text-gray-500">1:15 ratio ensuring personalized guidance</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-xs font-bold text-gray-900">Placement Assistance</h4>
-                    <p className="text-[11px] text-gray-500">Dedicated training & career counseling cell</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <Link
-                  href="/about-us"
-                  className="inline-flex items-center text-xs font-bold text-white bg-[#0f2b48] hover:bg-blue-900 px-5 py-3 rounded-xl transition shadow"
-                >
-                  Read Complete Institutional Profile <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-6">
-              <div className="relative">
-                <div className="rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 aspect-video flex items-center justify-center relative">
-                  <img
-                    src="https://acpce.ac.in/wp-content/uploads/2025/09/Home-page-About-ACPCE.png"
-                    alt="ACPCE Campus Infrastructure"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
-                    <div className="text-white">
-                      <div className="text-xs font-semibold uppercase tracking-wider text-amber-300">
-                        Campus Infrastructure
-                      </div>
-                      <div className="text-base font-bold">
-                        Main Academic Complex & Labs, Sector 4, Kharghar
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. Placements & Recruiters */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-              Career & Opportunities
-            </span>
-            <h2 className="text-3xl font-extrabold text-[#0f2b48] mt-3">
-              Training & Placement Cell
-            </h2>
-            <p className="text-gray-600 text-sm mt-2">
-              Our graduates are recruited by premier multinational enterprises, consulting firms, and technology leaders across India and overseas.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-10">
-            {[
-              "Tata Consultancy Services",
-              "Infosys",
-              "Capgemini",
-              "L&T Infotech",
-              "Reliance Jio",
-              "Cognizant",
-              "Tech Mahindra",
-              "Accenture",
-              "Wipro Technologies",
-              "Hexaware",
-              "Godrej & Boyce",
-              "Persistent Systems"
-            ].map((company, idx) => (
-              <div
-                key={idx}
-                className="bg-gray-50 rounded-xl p-4 border border-gray-200 shadow-sm flex items-center justify-center text-center font-bold text-xs text-gray-700 hover:border-amber-400 hover:text-blue-900 transition"
-              >
-                {company}
-              </div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Link
-              href="/placement"
-              className="inline-flex items-center text-xs font-bold text-[#0f2b48] hover:text-amber-600 bg-white border border-gray-300 px-6 py-3 rounded-xl shadow-sm hover:shadow transition"
-            >
-              View Full Placement Reports & Statistics <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
