@@ -239,15 +239,6 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
           </div>
 
           <div className="flex items-center space-x-3 ml-auto">
-            <a
-              href="https://portal.vmedulife.com/public/auth/#/login/acpcoe-navi-mumbai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs text-amber-300 hover:text-amber-200 font-medium flex items-center"
-            >
-              ERP Login <ExternalLink className="w-3 h-3 ml-1" />
-            </a>
-            <span className="text-gray-600">|</span>
             <Link
               href="/admission-enquiry"
               className="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold px-3 py-1 rounded text-xs transition uppercase tracking-wider"
