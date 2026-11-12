@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { navigationData } from '../data/navigation';
+import { navigationData, type NavItem } from '../data/navigation';
 import {
   Phone,
   Mail,
@@ -11,6 +11,7 @@ import {
   Menu,
   X,
   ChevronDown,
+  ChevronRight,
   ExternalLink
 } from 'lucide-react';
 
@@ -18,16 +19,198 @@ interface HeaderProps {
   onOpenSearch: () => void;
 }
 
+interface DesktopDropdownMenuProps {
+  items: NavItem[];
+  pathname: string;
+  onClose: () => void;
+  alignRight?: boolean;
+}
+
+/**
+ * Recursive desktop flyout dropdown supporting arbitrary live menu nesting depth.
+ */
+const DesktopDropdownMenu: React.FC<DesktopDropdownMenuProps> = ({
+  items,
+  pathname,
+  onClose,
+  alignRight = false
+}) => {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+
+  return (
+    <div className="bg-white rounded-lg shadow-xl border border-gray-200 py-1.5 w-60 text-gray-800">
+      {items.map((subItem, idx) => {
+        const hasChildren = Boolean(subItem.children && subItem.children.length > 0);
+        const isHovered = hoveredIdx === idx;
+        const isActive = Boolean(subItem.href && !subItem.isExternal && pathname === subItem.href);
+
+        const rowClasses = `flex items-center justify-between px-3.5 py-2 text-xs leading-snug transition cursor-pointer ${
+          isActive
+            ? 'bg-amber-100 text-amber-900 font-bold'
+            : isHovered
+              ? 'bg-amber-50 text-amber-700 font-semibold'
+              : hasChildren && !subItem.href
+                ? 'font-semibold text-gray-900'
+                : 'font-medium text-gray-700'
+        }`;
+
+        const trailingIcon = hasChildren ? (
+          <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 ml-2" />
+        ) : subItem.isExternal ? (
+          <ExternalLink className="w-3 h-3 text-gray-400 flex-shrink-0 ml-2" />
+        ) : null;
+
+        return (
+          <div
+            key={`${subItem.title}-${idx}`}
+            className="relative"
+            onMouseEnter={() => setHoveredIdx(idx)}
+            onMouseLeave={() => setHoveredIdx(null)}
+          >
+            {subItem.href ? (
+              subItem.isExternal ? (
+                <a
+                  href={subItem.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={onClose}
+                  className={rowClasses}
+                >
+                  <span>{subItem.title}</span>
+                  {trailingIcon}
+                </a>
+              ) : (
+                <Link href={subItem.href} onClick={onClose} className={rowClasses}>
+                  <span>{subItem.title}</span>
+                  {trailingIcon}
+                </Link>
+              )
+            ) : (
+              <div className={rowClasses}>
+                <span>{subItem.title}</span>
+                {trailingIcon}
+              </div>
+            )}
+
+            {hasChildren && isHovered && (
+              <div
+                className={`absolute top-0 z-50 ${
+                  alignRight ? 'right-full pr-1.5' : 'left-full pl-1.5'
+                }`}
+              >
+                <DesktopDropdownMenu
+                  items={subItem.children!}
+                  pathname={pathname}
+                  onClose={onClose}
+                  alignRight={alignRight}
+                />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+interface MobileNavItemProps {
+  item: NavItem;
+  pathname: string;
+  onNavigate: () => void;
+  depth?: number;
+}
+
+/**
+ * Recursive accordion navigation item for the mobile drawer menu.
+ */
+const MobileNavItem: React.FC<MobileNavItemProps> = ({
+  item,
+  pathname,
+  onNavigate,
+  depth = 0
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = Boolean(item.children && item.children.length > 0);
+  const isActive = Boolean(item.href && !item.isExternal && pathname === item.href);
+
+  const labelClasses =
+    depth === 0
+      ? `font-bold text-sm py-2 ${isActive ? 'text-amber-700' : 'text-gray-800 hover:text-amber-600'}`
+      : `text-xs py-1.5 ${isActive ? 'text-amber-700 font-bold' : 'text-gray-600 hover:text-amber-600'}`;
+
+  return (
+    <div className={depth === 0 ? 'border-b border-gray-100 pb-1.5' : ''}>
+      <div className="flex items-center justify-between gap-2">
+        {item.href ? (
+          item.isExternal ? (
+            <a
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onNavigate}
+              className={`flex-1 flex items-center gap-1.5 ${labelClasses}`}
+            >
+              <span>{item.title}</span>
+              <ExternalLink className="w-3 h-3 text-gray-400 flex-shrink-0" />
+            </a>
+          ) : (
+            <Link href={item.href} onClick={onNavigate} className={`flex-1 block ${labelClasses}`}>
+              {item.title}
+            </Link>
+          )
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsOpen((prev) => !prev)}
+            className={`flex-1 text-left cursor-pointer ${labelClasses} ${depth > 0 ? 'font-semibold text-gray-800' : ''}`}
+          >
+            {item.title}
+          </button>
+        )}
+
+        {hasChildren && (
+          <button
+            type="button"
+            onClick={() => setIsOpen((prev) => !prev)}
+            aria-label={`Toggle ${item.title} submenu`}
+            className="p-1.5 text-gray-500 hover:text-amber-600 cursor-pointer"
+          >
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+        )}
+      </div>
+
+      {hasChildren && isOpen && (
+        <div
+          className={`pl-3.5 space-y-1 mt-1 border-l-2 ${
+            depth === 0 ? 'border-amber-400' : 'border-gray-200'
+          }`}
+        >
+          {item.children!.map((child, idx) => (
+            <MobileNavItem
+              key={`${child.title}-${idx}`}
+              item={child}
+              pathname={pathname}
+              onNavigate={onNavigate}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [activeSubDropdown, setActiveSubDropdown] = useState<string | null>(null);
   const pathname = usePathname();
 
   const closeMenus = () => {
     setMobileMenuOpen(false);
     setActiveDropdown(null);
-    setActiveSubDropdown(null);
   };
 
   return (
@@ -127,31 +310,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
       {/* Desktop Main Navigation Bar */}
       <nav className="hidden lg:block bg-[#0f2b48] text-white border-t border-blue-900/60 shadow-inner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ul className="flex items-center space-x-1 justify-between text-[13px] font-medium tracking-wide">
-            <li className="py-2.5">
-              <Link
-                href="/"
-                className={`px-3 py-2 rounded transition hover:bg-blue-900/80 ${
-                  pathname === '/' ? 'text-amber-400 font-bold bg-blue-950/60' : 'text-gray-100'
-                }`}
-              >
-                Home
-              </Link>
-            </li>
-
+          <ul className="flex items-center justify-between text-[13px] font-medium tracking-wide">
             {navigationData.map((item, idx) => {
-              const hasChildren = item.children && item.children.length > 0;
+              const hasChildren = Boolean(item.children && item.children.length > 0);
               const isHovered = activeDropdown === item.title;
+              const alignRight = idx >= navigationData.length - 3;
 
               return (
                 <li
-                  key={idx}
+                  key={item.title}
                   className="relative group py-2.5"
                   onMouseEnter={() => setActiveDropdown(item.title)}
-                  onMouseLeave={() => {
-                    setActiveDropdown(null);
-                    setActiveSubDropdown(null);
-                  }}
+                  onMouseLeave={() => setActiveDropdown(null)}
                 >
                   {item.href ? (
                     item.isExternal ? (
@@ -159,6 +329,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                         href={item.href}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={closeMenus}
                         className="px-3 py-2 rounded transition hover:bg-blue-900/80 text-gray-100 hover:text-amber-300 flex items-center"
                       >
                         {item.title}
@@ -167,6 +338,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                     ) : (
                       <Link
                         href={item.href}
+                        onClick={closeMenus}
                         className={`px-3 py-2 rounded transition hover:bg-blue-900/80 hover:text-amber-300 flex items-center ${
                           pathname === item.href ? 'text-amber-400 font-bold bg-blue-950/60' : 'text-gray-100'
                         }`}
@@ -176,6 +348,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                     )
                   ) : (
                     <button
+                      type="button"
                       className={`px-3 py-2 rounded transition hover:bg-blue-900/80 hover:text-amber-300 flex items-center cursor-pointer ${
                         isHovered ? 'text-amber-400 bg-blue-900/60' : 'text-gray-100'
                       }`}
@@ -185,89 +358,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
                     </button>
                   )}
 
-                  {/* Level 1 Dropdown */}
                   {hasChildren && isHovered && (
-                    <div className="absolute left-0 top-full pt-1 w-64 z-50">
-                      <div className="bg-white rounded-lg shadow-xl border border-gray-200 py-2 text-gray-800">
-                        {item.children!.map((subItem, sIdx) => {
-                          const hasSubChildren = subItem.children && subItem.children.length > 0;
-                          const isSubHovered = activeSubDropdown === subItem.title;
-
-                          return (
-                            <div
-                              key={sIdx}
-                              className="relative"
-                              onMouseEnter={() => setActiveSubDropdown(subItem.title)}
-                            >
-                              {subItem.href ? (
-                                subItem.isExternal ? (
-                                  <a
-                                    href={subItem.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center justify-between px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs font-medium text-gray-700 transition"
-                                  >
-                                    <span>{subItem.title}</span>
-                                    <ExternalLink className="w-3 h-3 text-gray-400" />
-                                  </a>
-                                ) : (
-                                  <Link
-                                    href={subItem.href}
-                                    onClick={closeMenus}
-                                    className={`block px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs font-medium transition ${
-                                      pathname === subItem.href
-                                        ? 'bg-amber-100 text-amber-900 font-bold'
-                                        : 'text-gray-700'
-                                    }`}
-                                  >
-                                    {subItem.title}
-                                  </Link>
-                                )
-                              ) : (
-                                <div className="flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-900 hover:bg-gray-50 cursor-pointer">
-                                  <span>{subItem.title}</span>
-                                  <ChevronDown className="w-3 h-3 -rotate-90 text-gray-400" />
-                                </div>
-                              )}
-
-                              {/* Level 2 Sub-dropdown */}
-                              {hasSubChildren && isSubHovered && (
-                                <div className="absolute left-full top-0 pl-1 w-64 z-50">
-                                  <div className="bg-white rounded-lg shadow-xl border border-gray-200 py-2 text-gray-800">
-                                    {subItem.children!.map((nested, nIdx) => (
-                                      <div key={nIdx}>
-                                        {nested.isExternal ? (
-                                          <a
-                                            href={nested.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-between px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs text-gray-700 transition"
-                                          >
-                                            <span className="truncate">{nested.title}</span>
-                                            <ExternalLink className="w-3 h-3 text-gray-400 flex-shrink-0 ml-1" />
-                                          </a>
-                                        ) : (
-                                          <Link
-                                            href={nested.href || '#'}
-                                            onClick={closeMenus}
-                                            className={`block px-4 py-2 hover:bg-amber-50 hover:text-amber-700 text-xs transition ${
-                                              pathname === nested.href
-                                                ? 'bg-amber-100 text-amber-900 font-bold'
-                                                : 'text-gray-700'
-                                            }`}
-                                          >
-                                            {nested.title}
-                                          </Link>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                    <div className={`absolute top-full pt-1 z-50 ${alignRight ? 'right-0' : 'left-0'}`}>
+                      <DesktopDropdownMenu
+                        items={item.children!}
+                        pathname={pathname}
+                        onClose={closeMenus}
+                        alignRight={alignRight}
+                      />
                     </div>
                   )}
                 </li>
@@ -280,99 +378,22 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSearch }) => {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-x-0 top-[110px] bottom-0 bg-white/95 backdrop-blur-md z-40 overflow-y-auto border-t border-gray-200 px-4 py-6 shadow-2xl">
-          <div className="space-y-4">
+          <div className="space-y-3">
             <Link
               href="/"
-              className="block font-bold text-gray-900 text-base py-2 border-b border-gray-100"
-              onClick={() => setMobileMenuOpen(false)}
+              className="block font-bold text-gray-900 text-sm py-2 border-b border-gray-100"
+              onClick={closeMenus}
             >
               Home
             </Link>
 
-            {navigationData.map((item, idx) => (
-              <div key={idx} className="border-b border-gray-100 pb-2">
-                <div
-                  className="flex items-center justify-between font-bold text-gray-800 py-2 cursor-pointer"
-                  onClick={() =>
-                    setActiveDropdown(activeDropdown === item.title ? null : item.title)
-                  }
-                >
-                  {item.href ? (
-                    <Link
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-gray-800 hover:text-amber-600"
-                    >
-                      {item.title}
-                    </Link>
-                  ) : (
-                    <span>{item.title}</span>
-                  )}
-                  {item.children && (
-                    <ChevronDown
-                      className={`w-4 h-4 text-gray-500 transition-transform ${
-                        activeDropdown === item.title ? 'rotate-180' : ''
-                      }`}
-                    />
-                  )}
-                </div>
-
-                {item.children && activeDropdown === item.title && (
-                  <div className="pl-4 space-y-1.5 mt-1 border-l-2 border-amber-400">
-                    {item.children.map((sub, sIdx) => (
-                      <div key={sIdx}>
-                        {sub.isExternal ? (
-                          <a
-                            href={sub.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-xs text-gray-600 py-1.5 hover:text-amber-600"
-                          >
-                            <span>{sub.title}</span>
-                            <ExternalLink className="w-3 h-3 ml-1" />
-                          </a>
-                        ) : (
-                          <Link
-                            href={sub.href || '#'}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className="block text-xs text-gray-600 py-1.5 hover:text-amber-600"
-                          >
-                            {sub.title}
-                          </Link>
-                        )}
-
-                        {sub.children && (
-                          <div className="pl-3 space-y-1 mt-1 border-l border-gray-200">
-                            {sub.children.map((child, cIdx) => (
-                              <div key={cIdx}>
-                                {child.isExternal ? (
-                                  <a
-                                    href={child.href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center text-[11px] text-gray-500 py-1 hover:text-amber-600"
-                                  >
-                                    <span>{child.title}</span>
-                                    <ExternalLink className="w-2.5 h-2.5 ml-1" />
-                                  </a>
-                                ) : (
-                                  <Link
-                                    href={child.href || '#'}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="block text-[11px] text-gray-500 py-1 hover:text-amber-600"
-                                  >
-                                    {child.title}
-                                  </Link>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {navigationData.map((item) => (
+              <MobileNavItem
+                key={item.title}
+                item={item}
+                pathname={pathname}
+                onNavigate={closeMenus}
+              />
             ))}
           </div>
         </div>
