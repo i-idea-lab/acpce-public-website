@@ -240,10 +240,12 @@ export default async function HomePage() {
             {/* Vision Card */}
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold mb-6">
-                  <Award className="w-6 h-6" />
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold flex-shrink-0">
+                    <Award className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Our Vision</h3>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Our Vision</h3>
                 <p className="text-base text-gray-200 leading-relaxed">
                   {home.vision}
                 </p>
@@ -253,10 +255,12 @@ export default async function HomePage() {
             {/* Mission Card */}
             <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 flex flex-col justify-between">
               <div>
-                <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold mb-6">
-                  <BookOpen className="w-6 h-6" />
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500 text-gray-950 flex items-center justify-center font-bold flex-shrink-0">
+                    <BookOpen className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white">Our Mission</h3>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Our Mission</h3>
                 <ul className="space-y-4 text-sm text-gray-200">
                   {home.missions.map((mission, mIdx) => (
                     <li key={mIdx} className="flex items-start space-x-3">
