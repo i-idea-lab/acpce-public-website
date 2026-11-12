@@ -7,7 +7,6 @@ import {
   Calendar,
   FileCheck,
   ChevronRight,
-  Sparkles,
   BookOpen,
   Award
 } from 'lucide-react';
@@ -120,8 +119,7 @@ export default async function HomePage() {
                     </div>
                   </div>
 
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl flex items-center space-x-3 text-xs text-amber-200">
-                    <Sparkles className="w-5 h-5 flex-shrink-0 text-amber-400" />
+                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-center text-xs font-medium text-amber-200">
                     <span>
                       DTE Code 3146 | NAAC Cycle 2 Accredited Institution
                     </span>
